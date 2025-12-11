@@ -12,6 +12,11 @@ export async function uploadProfileImage(userId: string, formData: FormData) {
         return { error: "No file uploaded" }
     }
 
+    // Server-side size validation (Backup)
+    if (file.size > 5 * 1024 * 1024) {
+        return { error: "File too large (Max 5MB)" }
+    }
+
     try {
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)

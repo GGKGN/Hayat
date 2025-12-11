@@ -23,6 +23,12 @@ export default function ProfileHeader({ user }: { user: any }) {
         const file = e.target.files?.[0]
         if (!file) return
 
+        // 5MB Limit Check
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Dosya boyutu 5MB'dan küçük olmalıdır.")
+            return
+        }
+
         setIsUploading(true)
         const formData = new FormData()
         formData.append("file", file)
