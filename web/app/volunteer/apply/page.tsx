@@ -14,7 +14,7 @@ export default async function VolunteerApplyPage() {
 
     if (!isOpen) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-32">
                 <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-gray-100 max-w-lg w-full text-center">
                     <h1 className="text-3xl font-black text-gray-800 mb-4">Başvurular Kapalı</h1>
                     <p className="text-gray-500 font-medium">
@@ -33,7 +33,7 @@ export default async function VolunteerApplyPage() {
     const existingApp = await getMyApplication()
     if (existingApp) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-32">
                 <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-gray-100 max-w-lg w-full text-center">
                     <h1 className="text-2xl font-black text-gray-800 mb-2">Başvurunuz Alındı 🎉</h1>
                     <p className="text-gray-500 font-medium mb-6">
@@ -74,7 +74,7 @@ export default async function VolunteerApplyPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 md:px-8">
+        <div className="min-h-screen bg-gray-50 pt-32 pb-12 px-4 md:px-8">
             <div className="max-w-2xl mx-auto">
                 <div className="bg-purple-600 text-white p-8 md:p-12 rounded-[2.5rem] shadow-xl mb-8 relative overflow-hidden">
                     <div className="relative z-10">

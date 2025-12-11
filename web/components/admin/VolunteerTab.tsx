@@ -18,7 +18,8 @@ import {
     deleteQuestion,
     updateQuestionStatus,
     toggleVolunteerSystem,
-    updateApplicationStatus
+    updateApplicationStatus,
+    deleteApplication
 } from "@/actions/admin-volunteer"
 import { useRouter } from "next/navigation"
 
@@ -50,6 +51,12 @@ export default function VolunteerTab({ questions, applications, isOpen }: { ques
     async function handleReject(id: string) {
         if (confirm("Bu başvuruyu reddetmek istediğinize emin misiniz?")) {
             await updateApplicationStatus(id, "REJECTED")
+        }
+    }
+
+    async function handleDelete(id: string) {
+        if (confirm("Bu başvuruyu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+            await deleteApplication(id)
         }
     }
 
@@ -153,6 +160,7 @@ export default function VolunteerTab({ questions, applications, isOpen }: { ques
                                 app={app}
                                 onApprove={() => handleApprove(app.id)}
                                 onReject={() => handleReject(app.id)}
+                                onDelete={() => handleDelete(app.id)}
                             />
                         ))
                     )}
@@ -162,7 +170,7 @@ export default function VolunteerTab({ questions, applications, isOpen }: { ques
     )
 }
 
-function ApplicationCard({ app, onApprove, onReject }: any) {
+function ApplicationCard({ app, onApprove, onReject, onDelete }: any) {
     const [isExpanded, setIsExpanded] = useState(false)
     const answers = typeof app.answers === 'string' ? JSON.parse(app.answers) : app.answers
 
@@ -207,6 +215,10 @@ function ApplicationCard({ app, onApprove, onReject }: any) {
                     )}
 
                     {isExpanded ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
+
+                    <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors ml-2" title="Başvuruyu Sil">
+                        <Trash2 className="w-5 h-5" />
+                    </button>
                 </div>
             </div>
 

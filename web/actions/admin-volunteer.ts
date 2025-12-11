@@ -43,6 +43,21 @@ export async function updateApplicationStatus(id: string, status: "APPROVED" | "
     }
 }
 
+export async function deleteApplication(id: string) {
+    const session = await auth()
+    if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+
+    try {
+        await prisma.volunteerApplication.delete({
+            where: { id }
+        })
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (e) {
+        return { error: "Failed to delete application" }
+    }
+}
+
 export async function toggleVolunteerSystem(isOpen: boolean) {
     const session = await auth()
     if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }

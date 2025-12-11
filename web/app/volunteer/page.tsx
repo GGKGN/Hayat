@@ -1,7 +1,10 @@
 import { ArrowRight, Heart, Users, Star } from "lucide-react"
 import Link from "next/link"
+import { auth } from "@/lib/auth"
 
-export default function VolunteerPage() {
+export default async function VolunteerPage() {
+    const session = await auth()
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 pt-28 pb-12 px-4 relative overflow-hidden">
             {/* Background Decorations */}
@@ -64,8 +67,8 @@ export default function VolunteerPage() {
                         <p className="text-gray-400 font-medium text-lg mb-10 max-w-xl mx-auto">
                             Aramıza katılmak için formu doldur, en kısa sürede seninle iletişime geçelim.
                         </p>
-                        <Link href="/register" className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-2xl font-black text-lg hover:bg-primary hover:text-white transition-all shadow-lg hover:shadow-primary/50 hover:-translate-y-1">
-                            Kayıt Ol ve Başvur
+                        <Link href={session?.user ? "/volunteer/apply" : "/register"} className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-2xl font-black text-lg hover:bg-primary hover:text-white transition-all shadow-lg hover:shadow-primary/50 hover:-translate-y-1">
+                            {session?.user ? 'Başvuru Yap' : 'Kayıt Ol ve Başvur'}
                             <ArrowRight className="w-5 h-5" />
                         </Link>
                     </div>
