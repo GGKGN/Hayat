@@ -14,16 +14,23 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: SMTP_USER,
         pass: SMTP_PASS
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000,
 })
 
 export async function requestPasswordReset(email: string) {
+    console.log("Password Reset Requested for:", email) // Log start
+
     if (!SMTP_USER || !SMTP_PASS) {
+        console.error("SMTP Credentials missing")
         return { error: "SMTP config is missing. Please check server logs." }
     }
 
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
+        console.log("User not found for email:", email)
         // Return success even if user not found to prevent enumeration
         return { success: true, message: "Eğer bu email sistemde kayıtlıysa, sıfırlama bağlantısı gönderildi." }
     }
@@ -40,11 +47,13 @@ export async function requestPasswordReset(email: string) {
             expires
         }
     })
+    console.log("Token generated and saved")
 
     // Send Email
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password/${token}`
 
     try {
+        console.log("Attempting to send email via Nodemailer...")
         await transporter.sendMail({
             from: `"Hayat Destek" <${SMTP_USER}>`,
             to: email,
@@ -58,6 +67,7 @@ export async function requestPasswordReset(email: string) {
                 <p>Eğer bu talebi siz yapmadıysanız, bu emaili görmezden gelebilirsiniz.</p>
             `
         })
+        console.log("Email sent successfully")
         return { success: true, message: "Sıfırlama bağlantısı gönderildi." }
 
     } catch (error) {
