@@ -34,7 +34,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, permissions, isO
             {/* Mobile Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm animate-in fade-in"
+                    className="fixed inset-0 bg-black/50 z-[90] md:hidden backdrop-blur-sm animate-in fade-in"
                     onClick={onClose}
                 />
             )}
@@ -42,7 +42,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, permissions, isO
             <div className={`
                 fixed md:sticky top-0 md:top-24 left-0 h-full md:h-[calc(100vh-8rem)] 
                 w-64 bg-white md:rounded-3xl shadow-2xl md:shadow-sm border-r md:border border-gray-100 
-                flex-shrink-0 p-4 overflow-y-auto transform transition-transform duration-300 ease-in-out z-50
+                flex-shrink-0 p-4 overflow-y-auto transform transition-transform duration-300 ease-in-out z-[100]
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
                 <div className="flex items-center justify-between mb-6 px-2">
