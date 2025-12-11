@@ -231,8 +231,8 @@ export default function ReportsView({ tags: initialTags, reports: initialReports
                                             type="button"
                                             onClick={() => toggleTagSelection(t.id)}
                                             className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${selectedTags.includes(t.id)
-                                                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
-                                                    : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100'
+                                                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
+                                                : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100'
                                                 }`}
                                         >
                                             {t.name}
@@ -300,7 +300,7 @@ export default function ReportsView({ tags: initialTags, reports: initialReports
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-bold text-gray-700">{report.uploadedBy.name}</span>
-                                    <span className="text-[10px] text-gray-400">{new Date(report.uploadedAt).toLocaleDateString()}</span>
+                                    <span className="text-[10px] text-gray-400">{new Date(report.uploadedAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'numeric', year: 'numeric' })}</span>
                                 </div>
                             </div>
 

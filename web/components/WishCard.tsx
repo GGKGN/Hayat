@@ -47,8 +47,8 @@ export default function WishCard({ wish, onClick }: { wish: Wish; onClick?: () =
                 </div>
 
                 <div className={`relative z-10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border border-white/20 backdrop-blur-md ${wish.status === 'PENDING' ? 'bg-white/90 text-yellow-700 animate-pulse' :
-                        wish.status === 'IN_PROCESS' ? 'bg-white/20 text-white animate-pulse' :
-                            'bg-white/20 text-white'
+                    wish.status === 'IN_PROCESS' ? 'bg-white/20 text-white animate-pulse' :
+                        'bg-white/20 text-white'
                     }`}>
                     {wish.status === 'COMPLETED' ? 'Gerçekleşti' : wish.status === 'IN_PROCESS' ? 'Hazırlanıyor' : 'Bekliyor'}
                 </div>
@@ -76,7 +76,7 @@ export default function WishCard({ wish, onClick }: { wish: Wish; onClick?: () =
                     </div>
                     <div className="flex items-center">
                         <Calendar className="w-3 h-3 mr-1.5" />
-                        <span>{new Date(wish.createdAt).toLocaleDateString()}</span>
+                        <span>{new Date(wish.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'numeric', year: 'numeric' })}</span>
                     </div>
                 </div>
 
