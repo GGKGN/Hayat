@@ -42,43 +42,52 @@ export default function AdminSidebar({ activeTab, setActiveTab, permissions, isO
             <div className={`
                 fixed md:sticky top-0 md:top-24 left-0 h-full md:h-[calc(100vh-8rem)] 
                 w-64 bg-white md:rounded-3xl shadow-2xl md:shadow-sm border-r md:border border-gray-100 
-                flex-shrink-0 p-4 overflow-y-auto transform transition-transform duration-300 ease-in-out z-[100]
+                flex flex-col z-[100] transform transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
-                <div className="flex items-center justify-between mb-6 px-2">
+                {/* Header - Fixed at top */}
+                <div className="flex-shrink-0 flex items-center justify-between p-6 pb-4">
                     <div className="flex items-center bg-primary/10 rounded-2xl px-3 py-2">
                         <LayoutDashboard className="w-5 h-5 text-primary mr-3" />
                         <span className="font-bold text-primary tracking-wide">Yönetim</span>
                     </div>
-                    <button onClick={onClose} className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                        <X className="w-5 h-5" />
+                    <button
+                        onClick={onClose}
+                        className="md:hidden p-2 text-gray-500 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors cursor-pointer"
+                        aria-label="Menüyü Kapat"
+                    >
+                        <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                <nav className="space-y-2">
-                    {allowedItems.map((item) => {
-                        const Icon = item.icon
-                        const isActive = activeTab === item.id
-                        return (
-                            <button
-                                key={item.id}
-                                onClick={() => {
-                                    setActiveTab(item.id)
-                                    if (onClose) onClose()
-                                }}
-                                className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium ${isActive
-                                    ? "bg-primary text-white shadow-md shadow-green-100 transform translate-x-1"
-                                    : "text-gray-500 hover:bg-gray-50 hover:text-primary"
-                                    }`}
-                            >
-                                <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-white" : "text-gray-400 group-hover:text-primary"}`} />
-                                {item.name}
-                            </button>
-                        )
-                    })}
-                </nav>
+                {/* Navigation - Scrollable Area */}
+                <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+                    <nav className="space-y-2">
+                        {allowedItems.map((item) => {
+                            const Icon = item.icon
+                            const isActive = activeTab === item.id
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => {
+                                        setActiveTab(item.id)
+                                        if (onClose) onClose()
+                                    }}
+                                    className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium ${isActive
+                                        ? "bg-primary text-white shadow-md shadow-green-100 transform translate-x-1"
+                                        : "text-gray-500 hover:bg-gray-50 hover:text-primary"
+                                        }`}
+                                >
+                                    <Icon className={`w-5 h-5 mr-3 ${isActive ? "text-white" : "text-gray-400 group-hover:text-primary"}`} />
+                                    {item.name}
+                                </button>
+                            )
+                        })}
+                    </nav>
+                </div>
 
-                <div className="mt-8 pt-8 border-t border-gray-100 px-4">
+                {/* Footer - Fixed at bottom */}
+                <div className="flex-shrink-0 p-6 pt-4 border-t border-gray-100 mt-auto">
                     <div className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-4">Sistem Durumu</div>
                     <div className="flex items-center text-sm font-medium text-green-600 bg-green-50 px-3 py-2 rounded-lg">
                         <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
