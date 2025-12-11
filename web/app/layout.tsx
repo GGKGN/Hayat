@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "RTEÜ HAYAT - Hayalleri Yaşatma Topluluğu",
   description: "Recep Tayyip Erdoğan Üniversitesi Hayalleri Yaşatma Topluluğu Resmi Web Sitesi",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 import { getNavSettings } from "@/actions/settings"
