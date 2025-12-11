@@ -162,7 +162,11 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
     }
 
     async function handleCreateSupportPackage(formData: FormData) {
-        await createSupportPackage(formData)
+        const result = await createSupportPackage(formData)
+        if (result?.error) {
+            alert("Hata: " + result.error)
+            return
+        }
         setIsSupportFormOpen(false)
         alert("Destek paketi oluşturuldu!")
     }
@@ -579,7 +583,12 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
                                         {pkg.link}
                                     </a>
                                     <div className="mt-auto pt-4 border-t border-gray-50 flex justify-end">
-                                        <button onClick={() => deleteSupportPackage(pkg.id)} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all">
+                                        <button onClick={async () => {
+                                            if (confirm("Bu paketi silmek istediğinize emin misiniz?")) {
+                                                const res = await deleteSupportPackage(pkg.id)
+                                                if (res?.error) alert("Silinirken hata oluştu")
+                                            }
+                                        }} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>

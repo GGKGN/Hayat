@@ -119,10 +119,10 @@ model Tag {
 model SupportPackage {
   id        String   @id @default(cuid())
   name      String
-  content   String
+  content   String   @db.Text
   price     String
-  link      String
-  image     String?
+  link      String   @db.Text
+  image     String?  @db.Text
   createdAt DateTime @default(now())
 }
 
