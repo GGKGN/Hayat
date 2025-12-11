@@ -85,10 +85,67 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
         await updateWishStatus(id, newStatus)
     }
 
-    async function handleCreateEvent(formData: FormData) {
-        await createEvent(formData)
-        setIsEventFormOpen(false)
-        alert("Etkinlik oluşturuldu!")
+    const handleCreateEventSubmit = async (formData: FormData) => {
+        setIsUploading(true)
+        try {
+            const file = formData.get("file") as File
+            let coverImage = ""
+
+            if (file && file.size > 0) {
+                const uploadRes = await uploadEventImage(formData)
+                if (uploadRes.success && uploadRes.imageUrl) {
+                    coverImage = uploadRes.imageUrl
+                }
+            }
+
+            const eventData = new FormData()
+            eventData.append("title", formData.get("title") as string)
+            eventData.append("location", formData.get("location") as string)
+            eventData.append("date", formData.get("date") as string)
+            if (coverImage) eventData.append("coverImage", coverImage)
+
+            await createEvent(eventData)
+            setIsEventFormOpen(false)
+            alert("Etkinlik oluşturuldu!")
+
+        } catch (e) {
+            console.error(e)
+            alert("Etkinlik oluşturulurken hata oluştu")
+        } finally {
+            setIsUploading(false)
+        }
+    }
+
+    const handleUpdateEventSubmit = async (formData: FormData) => {
+        setIsUploading(true)
+        try {
+            const file = formData.get("file") as File
+            let coverImage = editingEvent.coverImage
+
+            if (file && file.size > 0) {
+                const uploadRes = await uploadEventImage(formData)
+                if (uploadRes.success && uploadRes.imageUrl) {
+                    coverImage = uploadRes.imageUrl
+                }
+            }
+
+            await updateEvent(editingEvent.id, {
+                title: formData.get("title") as string,
+                location: formData.get("location") as string,
+                date: new Date(formData.get("date") as string),
+                coverImage: coverImage
+            })
+
+            setEditingEvent(null)
+            setIsEventFormOpen(false)
+            alert("Etkinlik güncellendi!")
+
+        } catch (e) {
+            console.error(e)
+            alert("Etkinlik güncellenirken hata oluştu")
+        } finally {
+            setIsUploading(false)
+        }
     }
 
     async function handleCreateProject(formData: FormData) {
@@ -226,85 +283,6 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
                         </div>
                     </div>
                 )
-
-            case "events":
-                const filteredEvents = filterData(events, ['title', 'location'])
-                return (
-import { uploadEventImage } from "@/actions/upload"
-                import { createEvent, deleteEvent, updateEvent } from "@/actions/events"
-
-                // ... imports ...
-
-                // Inside component ...
-                const [isEventFormOpen, setIsEventFormOpen] = useState(false)
-                const [editingEvent, setEditingEvent] = useState<any>(null)
-                const [isUploading, setIsUploading] = useState(false)
-
-                // ... handlers ...
-
-                const handleCreateEventSubmit = async (formData: FormData) => {
-                    setIsUploading(true)
-                    try {
-                        const file = formData.get("file") as File
-                        let coverImage = ""
-
-                        if (file && file.size > 0) {
-                            const uploadRes = await uploadEventImage(formData)
-                            if (uploadRes.success && uploadRes.imageUrl) {
-                                coverImage = uploadRes.imageUrl
-                            }
-                        }
-
-                        // Append url to new formData for server action or call directly
-                        // Since createEvent expects formData with "coverImage" string
-                        const eventData = new FormData()
-                        eventData.append("title", formData.get("title") as string)
-                        eventData.append("location", formData.get("location") as string)
-                        eventData.append("date", formData.get("date") as string)
-                        if (coverImage) eventData.append("coverImage", coverImage)
-
-                        await createEvent(eventData)
-                        setIsEventFormOpen(false)
-
-                    } catch (e) {
-                        console.error(e)
-                        alert("Etkinlik oluşturulurken hata oluştu")
-                    } finally {
-                        setIsUploading(false)
-                    }
-                }
-
-                const handleUpdateEventSubmit = async (formData: FormData) => {
-                    setIsUploading(true)
-                    try {
-                        const file = formData.get("file") as File
-                        let coverImage = editingEvent.coverImage
-
-                        if (file && file.size > 0) {
-                            const uploadRes = await uploadEventImage(formData)
-                            if (uploadRes.success && uploadRes.imageUrl) {
-                                coverImage = uploadRes.imageUrl
-                            }
-                        }
-
-                        await updateEvent(editingEvent.id, {
-                            title: formData.get("title") as string,
-                            location: formData.get("location") as string,
-                            date: new Date(formData.get("date") as string),
-                            coverImage: coverImage
-                        })
-
-                        setEditingEvent(null)
-
-                    } catch (e) {
-                        console.error(e)
-                        alert("Etkinlik güncellenirken hata oluştu")
-                    } finally {
-                        setIsUploading(false)
-                    }
-                }
-
-            // ... render content ...
 
             case "events":
                 const filteredEvents = filterData(events, ['title', 'location'])
