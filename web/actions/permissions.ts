@@ -101,5 +101,31 @@ export async function getMyPermissions() {
         return DEFAULT_PERMISSIONS[session.user.role as Role] || []
     }
 
+    const perms = rolePerms.permissions as string[]
+
+    // SELF-HEALING: Check for legacy/broken permissions
+    // Legacy perms were lowercase (e.g., 'manage_wishes') or missing MANAGE_WISHES for ADMIN
+    const isAdmin = session.user.role === 'ADMIN'
+    const hasLegacyPerm = perms.some(p => p === 'manage_wishes' || p === 'view_dashboard')
+    const isMissingCriticalPerm = isAdmin && !perms.includes(PERMISSIONS.MANAGE_WISHES)
+
+    if (hasLegacyPerm || isMissingCriticalPerm) {
+        console.log(`[Permissions] Detected legacy/broken permissions for ${session.user.role}. Fixing...`)
+
+        // Use defaults
+        const newPerms = DEFAULT_PERMISSIONS[session.user.role as Role] || []
+
+        // Update DB
+        try {
+            await prisma.rolePermission.update({
+                where: { role: session.user.role as Role },
+                data: { permissions: newPerms }
+            })
+            return newPerms
+        } catch (e) {
+            console.error("Failed to auto-fix permissions", e)
+        }
+    }
+
     return rolePerms.permissions as string[]
 }
