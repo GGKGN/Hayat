@@ -28,8 +28,9 @@ export async function createSupportPackage(formData: FormData) {
         revalidatePath("/admin")
         revalidatePath("/support")
         return { success: true }
-    } catch (e) {
-        return { error: "Failed to create package" }
+    } catch (e: any) {
+        console.error("Support package creation error:", e)
+        return { error: "Failed to create package: " + (e.message || e) }
     }
 }
 

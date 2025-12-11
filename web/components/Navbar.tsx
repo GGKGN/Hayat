@@ -65,8 +65,27 @@ export default function Navbar({ links }: NavbarProps) {
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
 
+    // Profile Dropdown State
+    const [isProfileOpen, setIsProfileOpen] = useState(false)
+
+    // Close handlers
+    const closeMenu = () => setIsOpen(false)
+    const closeProfile = () => setIsProfileOpen(false)
+
+    // Helper to toggle profile
+    const toggleProfile = () => setIsProfileOpen(!isProfileOpen)
+
     return (
         <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "py-2" : "py-6"}`}>
+            {/* Click Outside Handler for Profile Dropdown */}
+            {isProfileOpen && (
+                <div
+                    className="fixed inset-0 z-[40] cursor-default"
+                    onClick={closeProfile}
+                    aria-hidden="true"
+                />
+            )}
+
             <div className={`mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${scrolled
                 ? "bg-white/80 backdrop-blur-lg shadow-lg rounded-full w-[calc(100%-2rem)] md:w-fit border border-white/50"
                 : "bg-transparent max-w-7xl w-full"
@@ -74,17 +93,13 @@ export default function Navbar({ links }: NavbarProps) {
                 <div className="flex justify-between md:justify-center md:gap-8 h-24 items-center">
                     {/* Logo */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href="/" className="flex items-center group">
+                        <Link href="/" onClick={closeMenu} className="flex items-center group">
                             <img src="/images/logo-1.png" alt="Hayat" className="h-20 w-auto group-hover:scale-105 transition-transform duration-300" />
                         </Link>
                     </div>
 
-
-
-
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-1 items-center">
-
                         {displayLinks.map((item) => (
                             <Link
                                 key={item.path}
@@ -93,13 +108,15 @@ export default function Navbar({ links }: NavbarProps) {
                             >
                                 {item.name}
                             </Link>
-                        )
-                        )}
+                        ))}
 
                         <div className="pl-2 border-l border-gray-200 ml-1">
                             {session ? (
-                                <div className="relative group">
-                                    <button className="flex items-center space-x-2 text-gray-700 font-bold focus:outline-none bg-white p-1 pr-4 rounded-full border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                                <div className="relative z-[50]">
+                                    <button
+                                        onClick={toggleProfile}
+                                        className={`flex items-center space-x-2 text-gray-700 font-bold focus:outline-none bg-white p-1 pr-4 rounded-full border shadow-sm hover:shadow-md transition-all ${isProfileOpen ? 'border-primary ring-2 ring-primary/20' : 'border-gray-100'}`}
+                                    >
                                         <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center border border-secondary/30">
                                             {session.user.image ? (
                                                 <img src={session.user.image} alt={session.user.name || "User"} className="w-full h-full rounded-full object-cover" />
@@ -109,18 +126,19 @@ export default function Navbar({ links }: NavbarProps) {
                                         </div>
                                         <span className="hidden lg:block text-sm">{session.user.name}</span>
                                     </button>
+
                                     {/* Dropdown */}
-                                    <div className="absolute right-0 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 p-2">
+                                    <div className={`absolute right-0 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-xl transition-all duration-300 transform p-2 ${isProfileOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
                                         <div className="space-y-1">
-                                            <Link href="/profile" className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-green-50 rounded-xl transition-colors">
+                                            <Link href="/profile" onClick={closeProfile} className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-green-50 rounded-xl transition-colors">
                                                 <UserIcon className="w-4 h-4 mr-3 text-primary" /> Profilim
                                             </Link>
                                             {(session.user.role === "ADMIN" || session.user.role === "MEMBER") && (
-                                                <Link href="/admin" className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-purple-50 rounded-xl transition-colors">
+                                                <Link href="/admin" onClick={closeProfile} className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-purple-50 rounded-xl transition-colors">
                                                     <LayoutDashboard className="w-4 h-4 mr-3 text-purple-500" /> Yönetim Paneli
                                                 </Link>
                                             )}
-                                            <button onClick={() => signOut()} className="w-full text-left flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors">
+                                            <button onClick={() => { signOut(); closeProfile() }} className="w-full text-left flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors">
                                                 <LogOut className="w-4 h-4 mr-3" /> Çıkış Yap
                                             </button>
                                         </div>
@@ -136,7 +154,6 @@ export default function Navbar({ links }: NavbarProps) {
 
                     {/* Mobile Menu Button */}
                     <div className="flex items-center md:hidden">
-
                         <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 hover:text-primary focus:outline-none bg-white/50 p-2 rounded-full">
                             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>
@@ -152,23 +169,23 @@ export default function Navbar({ links }: NavbarProps) {
                             <Link
                                 key={item.path}
                                 href={item.path}
+                                onClick={closeMenu}
                                 className="block px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:text-primary hover:bg-green-50 transition-colors"
                             >
                                 {item.name}
                             </Link>
-                        )
-                        )}
+                        ))}
                         <div className="h-px bg-gray-100 my-2"></div>
                         {session ? (
                             <>
-                                <Link href="/profile" className="block px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:text-primary hover:bg-green-50">Profilim</Link>
+                                <Link href="/profile" onClick={closeMenu} className="block px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:text-primary hover:bg-green-50">Profilim</Link>
                                 {(session.user.role === "ADMIN" || session.user.role === "MEMBER") && (
-                                    <Link href="/admin" className="block px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:text-purple-600 hover:bg-purple-50">Yönetim Paneli</Link>
+                                    <Link href="/admin" onClick={closeMenu} className="block px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:text-purple-600 hover:bg-purple-50">Yönetim Paneli</Link>
                                 )}
-                                <button onClick={() => signOut()} className="block w-full text-left px-4 py-3 rounded-xl text-base font-bold text-red-600 hover:bg-red-50">Çıkış Yap</button>
+                                <button onClick={() => { signOut(); closeMenu() }} className="block w-full text-left px-4 py-3 rounded-xl text-base font-bold text-red-600 hover:bg-red-50">Çıkış Yap</button>
                             </>
                         ) : (
-                            <Link href="/api/auth/signin" className="block w-full text-center px-4 py-3 rounded-xl text-base font-bold bg-primary text-white hover:bg-green-400 shadow-md">Giriş Yap</Link>
+                            <Link href="/api/auth/signin" onClick={closeMenu} className="block w-full text-center px-4 py-3 rounded-xl text-base font-bold bg-primary text-white hover:bg-green-400 shadow-md">Giriş Yap</Link>
                         )}
                     </div>
                 </div>
@@ -176,3 +193,4 @@ export default function Navbar({ links }: NavbarProps) {
         </nav>
     )
 }
+
