@@ -26,8 +26,8 @@ export async function uploadProfileImage(userId: string, formData: FormData) {
         const ext = file.name.split('.').pop()
         const filename = `profile-${userId}-${uniqueSuffix}.${ext}`
 
-        // Save to public/uploads
-        const uploadDir = join(process.cwd(), 'public', 'uploads')
+        // Save to uploads (root)
+        const uploadDir = join(process.cwd(), 'uploads')
 
         try {
             await require("fs/promises").mkdir(uploadDir, { recursive: true })
@@ -38,8 +38,8 @@ export async function uploadProfileImage(userId: string, formData: FormData) {
         const path = join(uploadDir, filename)
         await writeFile(path, buffer)
 
-        // Public URL
-        const imageUrl = `/uploads/${filename}`
+        // Public URL (via API)
+        const imageUrl = `/api/uploads/${filename}`
 
         // Update User
         await prisma.user.update({
@@ -73,8 +73,8 @@ export async function uploadEventImage(formData: FormData) {
         // Ensure only valid extensions if needed, but for now allow generic images
         const filename = `event-${uniqueSuffix}.${ext}`
 
-        // Save to public/uploads/events
-        const uploadDir = join(process.cwd(), 'public', 'uploads', 'events')
+        // Save to uploads/events
+        const uploadDir = join(process.cwd(), 'uploads', 'events')
 
         try {
             await require("fs/promises").mkdir(uploadDir, { recursive: true })
@@ -85,8 +85,8 @@ export async function uploadEventImage(formData: FormData) {
         const path = join(uploadDir, filename)
         await writeFile(path, buffer)
 
-        // Public URL
-        const imageUrl = `/uploads/events/${filename}`
+        // Public URL (via API)
+        const imageUrl = `/api/uploads/events/${filename}`
 
         return { success: true, imageUrl }
 
@@ -112,8 +112,8 @@ export async function uploadWishImage(formData: FormData) {
         const ext = file.name.split('.').pop()
         const filename = `wish-${uniqueSuffix}.${ext}`
 
-        // Save to public/uploads/wishes
-        const uploadDir = join(process.cwd(), 'public', 'uploads', 'wishes')
+        // Save to uploads/wishes
+        const uploadDir = join(process.cwd(), 'uploads', 'wishes')
 
         try {
             await require("fs/promises").mkdir(uploadDir, { recursive: true })
@@ -124,8 +124,8 @@ export async function uploadWishImage(formData: FormData) {
         const path = join(uploadDir, filename)
         await writeFile(path, buffer)
 
-        // Public URL
-        const imageUrl = `/uploads/wishes/${filename}`
+        // Public URL (via API)
+        const imageUrl = `/api/uploads/wishes/${filename}`
 
         return { success: true, imageUrl }
 
