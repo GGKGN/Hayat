@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, use } from "react"
 import { resetPassword } from "@/actions/auth-reset"
 import { useRouter } from "next/navigation"
 import { Lock, Loader2, CheckCircle, Eye, EyeOff } from "lucide-react"
 
-export default function ResetPasswordPage({ params }: { params: { token: string } }) {
+export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
@@ -14,9 +14,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
     const [error, setError] = useState("")
     const router = useRouter()
 
-    // In Next.js 15+ params access might be async in server components but this is client component receiving props.
-    // Ensure parent passes params correctly or use hook if needed, but standard page prop works for dynamic routes.
-    const token = params.token
+    const { token } = use(params)
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
