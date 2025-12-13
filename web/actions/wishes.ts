@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 
 export async function getWishes() {
-    return await prisma.wish.findMany({
+    const wishes = await prisma.wish.findMany({
         include: {
             user: {
                 select: {
@@ -22,6 +22,18 @@ export async function getWishes() {
         orderBy: {
             createdAt: "desc",
         },
+    })
+
+    const statusOrder = {
+        PENDING: 0,
+        IN_PROCESS: 1,
+        COMPLETED: 2
+    }
+
+    return wishes.sort((a, b) => {
+        const orderA = statusOrder[a.status] ?? 99;
+        const orderB = statusOrder[b.status] ?? 99;
+        return orderA - orderB;
     })
 }
 
