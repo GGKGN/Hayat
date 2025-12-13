@@ -46,6 +46,7 @@ import DeleteFeedbackButton from "./DeleteFeedbackButton"
 import VolunteerTab from "./VolunteerTab"
 import UserManagementTab from "./UserManagementTab"
 import WishManagementTab from "./WishManagementTab"
+import EventManagementTab from "./EventManagementTab"
 import StatsTab from "./StatsTab"
 
 
@@ -69,12 +70,10 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
     const router = useRouter()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [activeTab, setActiveTab] = useState("wishes")
+
     const [search, setSearch] = useState("")
 
     // Forms State
-    const [isEventFormOpen, setIsEventFormOpen] = useState(false) // Events state
-    const [editingEvent, setEditingEvent] = useState<any>(null)
-    const [isUploading, setIsUploading] = useState(false)
     const [isProjectFormOpen, setIsProjectFormOpen] = useState(false)
     const [isSupportFormOpen, setIsSupportFormOpen] = useState(false)
 
@@ -97,68 +96,7 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
 
 
 
-    const handleCreateEventSubmit = async (formData: FormData) => {
-        setIsUploading(true)
-        try {
-            const file = formData.get("file") as File
-            let coverImage = ""
 
-            if (file && file.size > 0) {
-                const uploadRes = await uploadEventImage(formData)
-                if (uploadRes.success && uploadRes.imageUrl) {
-                    coverImage = uploadRes.imageUrl
-                }
-            }
-
-            const eventData = new FormData()
-            eventData.append("title", formData.get("title") as string)
-            eventData.append("location", formData.get("location") as string)
-            eventData.append("date", formData.get("date") as string)
-            if (coverImage) eventData.append("coverImage", coverImage)
-
-            await createEvent(eventData)
-            setIsEventFormOpen(false)
-            alert("Etkinlik oluşturuldu!")
-
-        } catch (e) {
-            console.error(e)
-            alert("Etkinlik oluşturulurken hata oluştu")
-        } finally {
-            setIsUploading(false)
-        }
-    }
-
-    const handleUpdateEventSubmit = async (formData: FormData) => {
-        setIsUploading(true)
-        try {
-            const file = formData.get("file") as File
-            let coverImage = editingEvent.coverImage
-
-            if (file && file.size > 0) {
-                const uploadRes = await uploadEventImage(formData)
-                if (uploadRes.success && uploadRes.imageUrl) {
-                    coverImage = uploadRes.imageUrl
-                }
-            }
-
-            await updateEvent(editingEvent.id, {
-                title: formData.get("title") as string,
-                location: formData.get("location") as string,
-                date: new Date(formData.get("date") as string),
-                coverImage: coverImage
-            })
-
-            setEditingEvent(null)
-            setIsEventFormOpen(false)
-            alert("Etkinlik güncellendi!")
-
-        } catch (e) {
-            console.error(e)
-            alert("Etkinlik güncellenirken hata oluştu")
-        } finally {
-            setIsUploading(false)
-        }
-    }
 
     async function handleCreateProject(formData: FormData) {
         await createProject(formData)
@@ -254,77 +192,7 @@ export default function AdminTabs({ wishes, events, projects, users, messages, c
                 return <WishManagementTab wishes={wishes} users={users} />
 
             case "events":
-                const filteredEvents = filterData(events, ['title', 'location'])
-                return (
-                    <div className="space-y-6">
-                        <div className="flex justify-end">
-                            <button onClick={() => { setIsEventFormOpen(!isEventFormOpen); setEditingEvent(null) }} className="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all flex items-center gap-2 shadow-lg shadow-gray-200">
-                                {isEventFormOpen ? <XCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                                {isEventFormOpen ? 'Vazgeç' : 'Yeni Etkinlik'}
-                            </button>
-                        </div>
-
-                        {(isEventFormOpen || editingEvent) && (
-                            <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl animate-in fade-in slide-in-from-top-4 fixed inset-0 z-[60] m-auto max-w-2xl h-fit overflow-y-auto max-h-[90vh] md:relative md:inset-auto md:z-0">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold">{editingEvent ? 'Etkinliği Düzenle' : 'Yeni Etkinlik Oluştur'}</h3>
-                                    <button onClick={() => { setIsEventFormOpen(false); setEditingEvent(null) }} className="md:hidden p-2 bg-gray-100 rounded-full"><XCircle /></button>
-                                </div>
-                                <form action={editingEvent ? handleUpdateEventSubmit : handleCreateEventSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Etkinlik Başlığı</label>
-                                        <input name="title" defaultValue={editingEvent?.title} required className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20" placeholder="Örn: Doğa Yürüyüşü" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Tarih</label>
-                                        <input type="datetime-local" name="date" defaultValue={editingEvent?.date ? new Date(editingEvent.date).toISOString().slice(0, 16) : ''} required className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Konum</label>
-                                        <input name="location" defaultValue={editingEvent?.location} required className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20" placeholder="Örn: Ayder Yaylası" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-gray-700">Kapak Görseli</label>
-                                        <input type="file" name="file" accept="image/*" className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-primary/20" />
-                                        {editingEvent?.coverImage && <p className="text-xs text-green-600 truncate">Mevcut: {editingEvent.coverImage.split('/').pop()}</p>}
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <button disabled={isUploading} className="w-full bg-primary text-white p-4 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50">
-                                            {isUploading ? 'İşleniyor...' : (editingEvent ? 'Güncelle' : 'Oluştur')}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredEvents.map((event: any) => (
-                                <div key={event.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col group hover:shadow-md transition-all">
-                                    <div className="h-40 bg-gray-100 rounded-2xl mb-4 overflow-hidden relative">
-                                        {event.coverImage ? (
-                                            <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-gray-300"><Calendar className="w-10 h-10" /></div>
-                                        )}
-                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-700" suppressHydrationWarning>
-                                            {new Date(event.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'numeric', year: 'numeric' })}
-                                        </div>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-800 mb-1">{event.title}</h3>
-                                    <p className="text-sm text-gray-500 mb-4 flex items-center gap-1"><MapPin className="w-3 h-3" /> {event.location}</p>
-                                    <div className="mt-auto pt-4 border-t border-gray-50 flex justify-end gap-2">
-                                        <button onClick={() => setEditingEvent(event)} className="text-blue-400 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
-                                            <Edit2 className="w-4 h-4" />
-                                        </button>
-                                        <button onClick={() => deleteEvent(event.id)} className="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )
+                return <EventManagementTab events={events} />
 
             case "projects":
                 const filteredProjects = filterData(projects, ['title', 'status'])
