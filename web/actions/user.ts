@@ -17,7 +17,8 @@ export async function getAllUsers() {
                 status: true,
                 faculty: true,
                 grade: true,
-                createdAt: true
+                createdAt: true,
+                lastActive: true
             }
         })
         return users
