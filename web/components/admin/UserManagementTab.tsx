@@ -62,6 +62,23 @@ function RoleBadge({ role }: { role: string }) {
     )
 }
 
+function OnlineStatus({ lastActive }: { lastActive: string | Date | null }) {
+    if (!lastActive) return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">Çevrimdışı</span>
+
+    const lastActiveDate = new Date(lastActive)
+    const now = new Date()
+    const diffMinutes = (now.getTime() - lastActiveDate.getTime()) / (1000 * 60)
+    const isOnline = diffMinutes < 5
+
+    return (
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold gap-1 ${isOnline ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+            <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></span>
+            {isOnline ? 'Çevrimiçi' : 'Çevrimdışı'}
+            {!isOnline && diffMinutes < 60 && <span className="text-[10px] opacity-75">({Math.floor(diffMinutes)} dk)</span>}
+        </span>
+    )
+}
+
 export default function UserManagementTab({ users }: { users: any[] }) {
     const router = useRouter()
     const [search, setSearch] = useState("")
@@ -213,6 +230,7 @@ export default function UserManagementTab({ users }: { users: any[] }) {
                                 <th className="text-left p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">İLETİŞİM</th>
                                 <th className="text-left p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">ROL</th>
                                 <th className="text-left p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">DURUM</th>
+                                <th className="text-left p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">ONLINE</th>
                                 <th className="text-left p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">KAYIT TARİHİ</th>
                                 <th className="text-right p-6 text-xs font-bold text-gray-500 uppercase tracking-wider">İŞLEMLER</th>
                             </tr>
@@ -256,6 +274,9 @@ export default function UserManagementTab({ users }: { users: any[] }) {
                                     </td>
                                     <td className="p-6">
                                         <StatusBadge status={user.status || "PENDING"} />
+                                    </td>
+                                    <td className="p-6">
+                                        <OnlineStatus lastActive={user.lastActive} />
                                     </td>
                                     <td className="p-6 text-sm text-gray-500">
                                         {new Date(user.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}

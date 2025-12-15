@@ -29,9 +29,8 @@ export default function Hero() {
                         <span className="text-accent inline-block transform hover:scale-105 transition-transform duration-300 cursor-default delay-75">Harekete Geç!</span>
                     </h1>
 
-                    <p className="mt-6 text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-medium">
-                        Rize'nin en renkli topluluğunda senin de bir yerin var. <br />
-                        İyilik yapmak hiç bu kadar eğlenceli olmamıştı.
+                    <p className="mt-6 text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-medium whitespace-pre-line">
+                        Rize'nin en renkli topluluğunda senin de bir yerin var. İyilik yapmak hiç bu kadar eğlenceli olmamıştı.
                     </p>
 
                     <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">

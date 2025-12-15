@@ -58,7 +58,7 @@ export default function WishBoard({ initialWishes }: { initialWishes: any[] }) {
                         >
                             {status === "ALL" ? "Tümü" :
                                 status === "PENDING" ? "Bekleyen" :
-                                    status === "IN_PROCESS" ? "Süreçte" : "Tamam"}
+                                    status === "IN_PROCESS" ? "Süreçte" : "Tamamlanan"}
                         </button>
                     ))}
                 </div>
@@ -138,7 +138,7 @@ export default function WishBoard({ initialWishes }: { initialWishes: any[] }) {
                             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Durum</span>
                                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${getStatusColor(selectedWish.status)}`}>
-                                    {selectedWish.status === 'COMPLETED' ? 'Gerçekleşti' : selectedWish.status === 'IN_PROCESS' ? 'Hazırlanıyor' : 'Bekliyor'}
+                                    {selectedWish.status === 'COMPLETED' ? "Gerçekleşti" : selectedWish.status === 'IN_PROCESS' ? "Hazırlanıyor" : "Bekliyor"}
                                 </span>
                             </div>
 

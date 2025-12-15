@@ -2,9 +2,8 @@
 
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
-import { Menu, X, User as UserIcon, LogOut, LayoutDashboard } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, Settings } from "lucide-react"
 import { useState, useEffect } from "react"
-
 
 interface NavbarProps {
     links?: { name: string; path: string }[]
@@ -18,13 +17,11 @@ export default function Navbar({ links }: NavbarProps) {
     // Default links if none provided
     const defaultLinks = [
         { name: "Ana Sayfa", path: "/" },
-        { name: "Takımlar", path: "/teams" },
-        { name: "Etkinlikler", path: "/events" },
-        { name: "Projeler", path: "/projects" },
-        { name: "Destek Ol", path: "/support" }, // Added
-        // Condition for Reports will be handled by filtering or appending
         { name: "Hakkımızda", path: "/about" },
-        { name: "İletişim", path: "/contact" }
+        { name: "Takımlar", path: "/teams" },
+        { name: "Projeler", path: "/projects" },
+        { name: "Etkinlikler", path: "/events" },
+        { name: "İletişim", path: "/contact" },
     ]
 
     const navLinks = links || defaultLinks
@@ -55,6 +52,10 @@ export default function Navbar({ links }: NavbarProps) {
                 displayLinks.splice(displayLinks.length - 2, 0, { name: "Raporlar", path: "/reports" })
             }
         }
+    }
+
+    const getNavItemLabel = (item: { name: string; path: string }) => {
+        return item.name
     }
 
     useEffect(() => {
@@ -106,7 +107,7 @@ export default function Navbar({ links }: NavbarProps) {
                                 href={item.path}
                                 className="text-gray-600 hover:text-primary hover:bg-green-50 px-3 py-2 rounded-full transition-all font-bold text-sm whitespace-nowrap"
                             >
-                                {item.name}
+                                {getNavItemLabel(item)}
                             </Link>
                         ))}
 
@@ -129,9 +130,9 @@ export default function Navbar({ links }: NavbarProps) {
 
                                     {/* Dropdown */}
                                     <div className={`absolute right-0 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-xl transition-all duration-300 transform p-2 ${isProfileOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
-                                        <div className="space-y-1">
+                                        <div className="py-1">
                                             <Link href="/profile" onClick={closeProfile} className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-green-50 rounded-xl transition-colors">
-                                                <UserIcon className="w-4 h-4 mr-3 text-primary" /> Profilim
+                                                <User className="w-4 h-4 mr-3 text-primary" /> Profilim
                                             </Link>
                                             {(session.user.role === "ADMIN" || session.user.role === "MEMBER") && (
                                                 <Link href="/admin" onClick={closeProfile} className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-purple-50 rounded-xl transition-colors">
@@ -145,9 +146,14 @@ export default function Navbar({ links }: NavbarProps) {
                                     </div>
                                 </div>
                             ) : (
-                                <Link href="/api/auth/signin" className="bg-primary text-white px-6 py-2.5 rounded-full font-bold hover:bg-green-400 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md text-sm">
-                                    Giriş Yap
-                                </Link>
+                                <div className="flex items-center gap-4">
+                                    <Link href="/login" className="text-sm font-bold text-gray-700 hover:text-primary transition-colors">
+                                        Giriş Yap
+                                    </Link>
+                                    <Link href="/register" className="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-full hover:bg-green-600 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                        Kayıt Ol
+                                    </Link>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -185,7 +191,10 @@ export default function Navbar({ links }: NavbarProps) {
                                 <button onClick={() => { signOut(); closeMenu() }} className="block w-full text-left px-4 py-3 rounded-xl text-base font-bold text-red-600 hover:bg-red-50">Çıkış Yap</button>
                             </>
                         ) : (
-                            <Link href="/api/auth/signin" onClick={closeMenu} className="block w-full text-center px-4 py-3 rounded-xl text-base font-bold bg-primary text-white hover:bg-green-400 shadow-md">Giriş Yap</Link>
+                            <div className="flex flex-col gap-2">
+                                <Link href="/login" onClick={closeMenu} className="block w-full text-center px-4 py-3 rounded-xl text-base font-bold text-gray-700 hover:bg-gray-100">Giriş Yap</Link>
+                                <Link href="/register" onClick={closeMenu} className="block w-full text-center px-4 py-3 rounded-xl text-base font-bold bg-primary text-white hover:bg-green-400 shadow-md">Kayıt Ol</Link>
+                            </div>
                         )}
                     </div>
                 </div>

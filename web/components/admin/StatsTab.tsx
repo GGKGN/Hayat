@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Users, CheckCircle, Calendar, MessageSquare, TrendingUp, TrendingDown, ArrowUp, ArrowDown } from "lucide-react"
+import { Users, CheckCircle, Calendar, MessageSquare, TrendingUp, TrendingDown, ArrowUp, ArrowDown, Activity } from "lucide-react"
 
 interface StatsTabProps {
     wishes: any[]
@@ -67,6 +67,12 @@ export default function StatsTab({ wishes, users, events, messages }: StatsTabPr
     }
     const totalWishes = wishes.length || 1
 
+    const onlineUsersCount = users.filter(u => {
+        if (!u.lastActive) return false
+        const diff = new Date().getTime() - new Date(u.lastActive).getTime()
+        return diff < 5 * 60 * 1000 // 5 minutes
+    }).length
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Top Cards */}
@@ -87,6 +93,25 @@ export default function StatsTab({ wishes, users, events, messages }: StatsTabPr
                             {userGrowth.direction === 'up' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
                             <span>%{userGrowth.percent}</span>
                             <span className="text-gray-400 font-medium ml-1">geçen haftaya göre</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Activity className="w-24 h-24 text-green-500" />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-green-50 text-green-600 rounded-xl">
+                                <Activity className="w-5 h-5" />
+                            </div>
+                            <span className="font-bold text-gray-500 text-sm uppercase tracking-wide">Çevrimiçi</span>
+                        </div>
+                        <h3 className="text-4xl font-black text-gray-900 mb-2">{onlineUsersCount}</h3>
+                        <div className="flex items-center gap-1 text-xs font-bold text-green-600">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            Şu an aktif
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import Providers from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FeedbackWidget from "@/components/FeedbackWidget";
+import { getNavSettings } from "@/actions/settings"
 
 
 const geistSans = Geist({
@@ -24,8 +25,6 @@ export const metadata: Metadata = {
     icon: "/icon.png",
   },
 };
-
-import { getNavSettings } from "@/actions/settings"
 
 export default async function RootLayout({
   children,

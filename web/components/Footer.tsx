@@ -32,7 +32,7 @@ export default function Footer() {
                         <h4 className="text-lg font-bold mb-6">Hızlı Erişim</h4>
                         <ul className="space-y-4 text-sm text-gray-400">
                             <li><Link href="/about" className="hover:text-primary transition-colors">Hakkımızda</Link></li>
-                            <li><Link href="/projects" className="hover:text-primary transition-colors">Projelerimiz</Link></li>
+                            <li><Link href="/projects" className="hover:text-primary transition-colors">Projeler</Link></li>
                             <li><Link href="/events" className="hover:text-primary transition-colors">Etkinlikler</Link></li>
                             <li><Link href="/contact" className="hover:text-primary transition-colors">İletişim</Link></li>
                         </ul>
@@ -44,7 +44,7 @@ export default function Footer() {
                         <ul className="space-y-4 text-sm text-gray-400">
                             <li><Link href="/volunteer" className="hover:text-primary transition-colors">Gönüllü Ol</Link></li>
                             <li><Link href="/support" className="hover:text-primary transition-colors">Bağış Yap</Link></li>
-                            <li><Link href="/faq" className="hover:text-primary transition-colors">SSS</Link></li>
+                            <li><Link href="/faq" className="hover:text-primary transition-colors">S.S.S</Link></li>
                             <li><Link href="/privacy" className="hover:text-primary transition-colors">Gizlilik Politikası</Link></li>
                         </ul>
                     </div>
